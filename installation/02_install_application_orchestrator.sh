@@ -43,9 +43,46 @@ sudo ansible-playbook -i inventory install.yml
 # install model
 echo Install Model
 
-# sudo docker run --detach \
-#     --name model \
-#     model
+# build docker image
+cat > Dockerfile <<EOF
+FROM alpine:latest
+
+MAINTAINER Bernard Tsai <bernad@tsai.eu>
+
+RUN apk --update add --no-cache openssh bash git \
+  && sed -i s/#PermitRootLogin.*/PermitRootLogin\ yes/ /etc/ssh/sshd_config \
+  && echo "root:password" | chpasswd \
+  && rm -rf /var/cache/apk/*
+RUN sed -ie 's/#Port 22/Port 22/g' /etc/ssh/sshd_config
+RUN sed -ri 's/#HostKey \/etc\/ssh\/ssh_host_key/HostKey \/etc\/ssh\/ssh_host_key/g' /etc/ssh/sshd_config
+RUN sed -ir 's/#HostKey \/etc\/ssh\/ssh_host_rsa_key/HostKey \/etc\/ssh\/ssh_host_rsa_key/g' /etc/ssh/sshd_config
+RUN sed -ir 's/#HostKey \/etc\/ssh\/ssh_host_dsa_key/HostKey \/etc\/ssh\/ssh_host_dsa_key/g' /etc/ssh/sshd_config
+RUN sed -ir 's/#HostKey \/etc\/ssh\/ssh_host_ecdsa_key/HostKey \/etc\/ssh\/ssh_host_ecdsa_key/g' /etc/ssh/sshd_config
+RUN sed -ir 's/#HostKey \/etc\/ssh\/ssh_host_ed25519_key/HostKey \/etc\/ssh\/ssh_host_ed25519_key/g' /etc/ssh/sshd_config
+RUN /usr/bin/ssh-keygen -A
+RUN ssh-keygen -t rsa -b 4096 -f  /etc/ssh/ssh_host_key
+
+RUN apk add --no-cache python3 && \
+    python3 -m ensurepip && \
+    rm -r /usr/lib/python*/ensurepip && \
+    pip3 install --upgrade pip setuptools && \
+    if [ ! -e /usr/bin/pip ]; then ln -s pip3 /usr/bin/pip ; fi && \
+    if [[ ! -e /usr/bin/python ]]; then ln -sf /usr/bin/python3 /usr/bin/python; fi && \
+    rm -r /root/.cache
+
+RUN git clone https://github.com/BernardTsai/ao_model.git \
+    && cd ao_model \
+    && python setup.py install
+
+EXPOSE 22
+CMD ["/usr/sbin/sshd","-D"]
+EOF
+
+# build docker image
+sudo docker build -t model .
+
+# run docker image
+sudo docker run --detach --name model model
 
 # install portainer
 echo Install Portainer
