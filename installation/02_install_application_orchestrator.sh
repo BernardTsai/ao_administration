@@ -93,5 +93,15 @@ sudo docker run --detach \
     --volume /var/run/docker.sock:/var/run/docker.sock \
     portainer/portainer
 
+# add hosts
+echo Add Hosts to /etc/hosts
+
+export gitlab_ip=$(docker inspect -f '{{range .NetworkSettings.Networks}}{{.IPAddress}}{{end}}' gitlab)
+export model_ip=$(docker inspect -f '{{range .NetworkSettings.Networks}}{{.IPAddress}}{{end}}' model)
+
+sudo docker exec -it gitlab "echo $gitlab_ip awx_web >> /etc/hosts"
+sudo docker exec -it gitlab "echo $model_ip awx_web >> /etc/hosts"
+sudo docker exec -it gitlab "echo $gitlab_ip model   >> /etc/hosts"
+
 # Server configuration completed
 echo Finished

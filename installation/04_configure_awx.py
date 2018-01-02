@@ -8,14 +8,14 @@ import yaml
 
 # ----- VARIABLES --------------------------------------------------------------
 
-url_prefix     = "http://localhost/api/v2/"
+url_prefix     = "http://localhost:81/api/v2/"
 username       = "admin"
 password       = "password"
 organization   = "DTAG"
-project        = "LCM"
-project_url    = "https://github.com/BernardTsai/lcm.git"
-inventory      = "CLOUD"
-inventory_file = "./inventory.yaml"
+project        = "Automation"
+project_url    = "https://gitlab/Tools/automation.git"
+inventory      = "cloud"
+inventory_url  = "https://gitlab/Tools/environments.git"
 
 # ----- GET TOKEN --------------------------------------------------------------
 
