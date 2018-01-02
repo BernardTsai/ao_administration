@@ -99,9 +99,9 @@ echo Add Hosts to /etc/hosts
 export gitlab_ip=$(docker inspect -f '{{range .NetworkSettings.Networks}}{{.IPAddress}}{{end}}' gitlab)
 export model_ip=$(docker inspect -f '{{range .NetworkSettings.Networks}}{{.IPAddress}}{{end}}' model)
 
-sudo docker exec -it gitlab "echo $gitlab_ip awx_web >> /etc/hosts"
-sudo docker exec -it gitlab "echo $model_ip awx_web >> /etc/hosts"
-sudo docker exec -it gitlab "echo $gitlab_ip model   >> /etc/hosts"
+sudo docker exec -it awx_web sh -c "echo $gitlab_ip gitlab >> /etc/hosts"
+sudo docker exec -it awx_web sh -c "echo $model_ip  gitlab >> /etc/hosts"
+sudo docker exec -it model   sh -c "echo $gitlab_ip gitlab >> /etc/hosts"
 
 # Server configuration completed
 echo Finished
