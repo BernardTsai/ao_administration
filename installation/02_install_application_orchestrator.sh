@@ -40,6 +40,10 @@ sed -i 's/host_port=80/host_port=81/' inventory
 # start installer ansible playbook
 sudo ansible-playbook -i inventory install.yml
 
+# cleanup
+cd ../..
+rm -rf awx
+
 # install model
 echo Install Model
 
@@ -84,6 +88,9 @@ sudo docker build -t model .
 # run docker image
 sudo docker run --detach --name model model
 
+# cleanup
+rm Dockerfile
+
 # install portainer
 echo Install Portainer
 
@@ -99,9 +106,11 @@ echo Add Hosts to /etc/hosts
 export gitlab_ip=$(docker inspect -f '{{range .NetworkSettings.Networks}}{{.IPAddress}}{{end}}' gitlab)
 export model_ip=$(docker inspect -f '{{range .NetworkSettings.Networks}}{{.IPAddress}}{{end}}' model)
 
-sudo docker exec -it awx_web sh -c "echo $gitlab_ip gitlab >> /etc/hosts"
-sudo docker exec -it awx_web sh -c "echo $model_ip  gitlab >> /etc/hosts"
-sudo docker exec -it model   sh -c "echo $gitlab_ip gitlab >> /etc/hosts"
+sudo docker exec -it awx_web  sh -c "echo $gitlab_ip gitlab >> /etc/hosts"
+sudo docker exec -it awx_web  sh -c "echo $model_ip  model  >> /etc/hosts"
+sudo docker exec -it awx_task sh -c "echo $gitlab_ip gitlab >> /etc/hosts"
+sudo docker exec -it awx_task sh -c "echo $model_ip  model  >> /etc/hosts"
+sudo docker exec -it model    sh -c "echo $gitlab_ip gitlab >> /etc/hosts"
 
 # Server configuration completed
 echo Finished

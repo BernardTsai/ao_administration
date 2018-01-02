@@ -22,8 +22,8 @@ user.password_confirmation = 'password'
 user.save!
 
 # Create access token
-# token = PersonalAccessToken.new(user: user, name: 'token', token: 'gitlab_token', scopes: Gitlab::Auth::API_SCOPES)
-# token.save!
+token = PersonalAccessToken.new(user: user, name: 'token', token: 'gitlab_token', scopes: Gitlab::Auth::API_SCOPES)
+token.save!
 
 # Create 'Tools' group
 group = Group.new(name:'Tools', path: 'Tools', visibility: 'public')
@@ -59,7 +59,10 @@ EOF
 docker cp gitlab_configuration.rb gitlab:/gitlab_configuration.rb
 
 # apply configuration script
-docker exec gitlab gitlab-rails runner -e production /gitlab_configuration.rb
+docker exec gitlab gitlab-rails runner -e production /gitlab_configuration.rb 2> /dev/null
+
+# cleanup
+rm gitlab_configuration.rb
 
 # Server configuration completed
 echo Finished
