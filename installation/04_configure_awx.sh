@@ -32,6 +32,8 @@ export PROJECT=$(curl -s -d "$DATA" -H "$HEADER1" -H "$HEADER2" http://localhost
 
 echo $PROJECT
 
+sleep 5
+
 # ------------------------------------------------------------------------------
 
 echo Defining inventory
@@ -82,4 +84,4 @@ echo $TEMPLATE
 
 # ------------------------------------------------------------------------------
 
-print( "Finished" )
+echo Finished

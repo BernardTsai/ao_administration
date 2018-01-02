@@ -22,6 +22,7 @@ sudo docker rm $(docker ps -a -q)   > /dev/null 2>&1
 echo Remove volumes
 sudo docker volume rm `docker volume ls -q -f dangling=true`
 sudo rm -rf /tmp/pgdocker 2>&1 > /dev/null
+sudo rm -rf /srv/gitlab   2>&1 > /dev/null
 
 # Remove images
 echo Remove images
