@@ -76,6 +76,7 @@ RUN apk add --no-cache python3 && \
 
 RUN git clone https://github.com/BernardTsai/ao_model.git \
     && cd ao_model \
+    && pip install -y jinja2 \
     && python setup.py install
 
 EXPOSE 22
