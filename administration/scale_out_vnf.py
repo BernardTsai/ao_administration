@@ -45,7 +45,7 @@ print( "Scale-Out VNF")
 
 url        = url_prefix + "job_templates/{}/launch/".format(template_id)
 headers    = {"Authorization": "Token {}".format(token), "Content-Type": "application/json"}
-extra_vars = json.dumps( {"vnf":"Clearwater", "cluster":"ellis"} )
+extra_vars = json.dumps( {"vnf":"example", "cluster":"ellis"} )
 data       = json.dumps( {"extra_vars":extra_vars} )
 
 response = requests.post(url, headers=headers, data=data)

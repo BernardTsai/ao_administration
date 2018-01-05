@@ -6,7 +6,7 @@
 #
 # Author: Bernard Tsai (mailto:bernard@tsai.eu)
 #
-# BASH script to configure GitLab (password/tokoens/groups/projects).
+# BASH script to reload automation scripts.
 #
 # Usage: ./sync_automation_project.sh
 #
