@@ -25,6 +25,10 @@ sudo apt-get -y install \
      curl \
      software-properties-common
 
+ # install jq
+ echo Install sshuttle
+ sudo apt-get -y install sshuttle
+
 # install jq
 echo Install jq
 sudo apt-get -y install jq
