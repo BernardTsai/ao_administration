@@ -53,7 +53,7 @@ FROM alpine:latest
 
 MAINTAINER Bernard Tsai <bernad@tsai.eu>
 
-RUN apk --update add --no-cache openssh bash git \
+RUN apk --update add --no-cache openssh bash git curl \
   && sed -i s/#PermitRootLogin.*/PermitRootLogin\ yes/ /etc/ssh/sshd_config \
   && echo "root:password" | chpasswd \
   && rm -rf /var/cache/apk/*
