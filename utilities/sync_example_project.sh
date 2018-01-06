@@ -36,7 +36,7 @@ route = Route.where(path:'Applications/example')
 Route.delete(route)
 
 # Create 'Application/example' project
-project = Project.new(creator: user, namespace_id: group.ids[0], name:'example', path:'automation', visibility: 'public', import_url: 'https://github.com/BernardTsai/ao_example.git')
+project = Project.new(creator: user, namespace_id: group.ids[0], name:'example', path:'example', visibility: 'public', import_url: 'https://github.com/BernardTsai/ao_example.git')
 project.save!
 project.import_schedule!
 project.import_start!
