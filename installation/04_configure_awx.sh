@@ -57,27 +57,27 @@ echo Defining job templates
 export HEADER1="Content-Type: application/json"
 export HEADER2="Authorization: Token $TOKEN"
 
-export DATA='{"name":"Deployment", "organization":'$ORGANIZATION', "inventory":'$INVENTORY', "project":'$PROJECT', "playbook":"deployment-playbook.yml", "ask_variables_on_launch": true}'
+export DATA='{"name":"Deployment", "organization":'$ORGANIZATION', "inventory":'$INVENTORY', "project":'$PROJECT', "playbook":"deployment-playbook.yml", "ask_variables_on_launch": true, "verbosity": 3}'
 export TEMPLATE=$(curl -s -d "$DATA" -H "$HEADER1" -H "$HEADER2" http://localhost:81/api/v2/job_templates/ | jq -r ".id")
 
 echo $TEMPLATE
 
-export DATA='{"name":"Inventory", "organization":'$ORGANIZATION', "inventory":'$INVENTORY', "project":'$PROJECT', "playbook":"inventory-playbook.yml", "ask_variables_on_launch": true}'
+export DATA='{"name":"Inventory", "organization":'$ORGANIZATION', "inventory":'$INVENTORY', "project":'$PROJECT', "playbook":"inventory-playbook.yml", "ask_variables_on_launch": true, "verbosity": 3}'
 export TEMPLATE=$(curl -s -d "$DATA" -H "$HEADER1" -H "$HEADER2" http://localhost:81/api/v2/job_templates/ | jq -r ".id")
 
 echo $TEMPLATE
 
-export DATA='{"name":"Scale-In", "organization":'$ORGANIZATION', "inventory":'$INVENTORY', "project":'$PROJECT', "playbook":"scale-in-playbook.yml", "ask_variables_on_launch": true}'
+export DATA='{"name":"Scale-In", "organization":'$ORGANIZATION', "inventory":'$INVENTORY', "project":'$PROJECT', "playbook":"scale-in-playbook.yml", "ask_variables_on_launch": true, "verbosity": 3}'
 export TEMPLATE=$(curl -s -d "$DATA" -H "$HEADER1" -H "$HEADER2" http://localhost:81/api/v2/job_templates/ | jq -r ".id")
 
 echo $TEMPLATE
 
-export DATA='{"name":"Scale-Out", "organization":'$ORGANIZATION', "inventory":'$INVENTORY', "project":'$PROJECT', "playbook":"scale-out-playbook.yml", "ask_variables_on_launch": true}'
+export DATA='{"name":"Scale-Out", "organization":'$ORGANIZATION', "inventory":'$INVENTORY', "project":'$PROJECT', "playbook":"scale-out-playbook.yml", "ask_variables_on_launch": true, "verbosity": 3}'
 export TEMPLATE=$(curl -s -d "$DATA" -H "$HEADER1" -H "$HEADER2" http://localhost:81/api/v2/job_templates/ | jq -r ".id")
 
 echo $TEMPLATE
 
-export DATA='{"name":"Cleanup", "organization":'$ORGANIZATION', "inventory":'$INVENTORY', "project":'$PROJECT', "playbook":"cleanup-playbook.yml", "ask_variables_on_launch": true}'
+export DATA='{"name":"Cleanup", "organization":'$ORGANIZATION', "inventory":'$INVENTORY', "project":'$PROJECT', "playbook":"cleanup-playbook.yml", "ask_variables_on_launch": true, "verbosity": 3}'
 export TEMPLATE=$(curl -s -d "$DATA" -H "$HEADER1" -H "$HEADER2" http://localhost:81/api/v2/job_templates/ | jq -r ".id")
 
 echo $TEMPLATE

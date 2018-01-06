@@ -18,7 +18,7 @@ docker exec gitlab rm -rf /var/opt/gitlab/git-data/repositories/Applications/exa
 docker exec gitlab rm -rf /var/opt/gitlab/git-data/repositories/Applications/example.wiki.git
 
 # build configuration script
-cat > sync_automation_project.rb <<EOF
+cat > sync_example_project.rb <<EOF
 # Get admin user
 user = User.where(id: 1).first
 
@@ -44,7 +44,7 @@ project.import_finish!
 EOF
 
 # copy configuration to container
-docker cp sync_automation_project.rb gitlab:/sync_example_project.rb
+docker cp sync_example_project.rb gitlab:/sync_example_project.rb
 
 # apply configuration script
 docker exec gitlab gitlab-rails runner -e production /sync_example_project.rb 2> /dev/null
