@@ -57,6 +57,11 @@ echo Defining job templates
 export HEADER1="Content-Type: application/json"
 export HEADER2="Authorization: Token $TOKEN"
 
+export DATA='{"name":"Onboarding", "organization":'$ORGANIZATION', "inventory":'$INVENTORY', "project":'$PROJECT', "playbook":"onboarding-playbook.yml", "ask_variables_on_launch": true, "verbosity": 3}'
+export TEMPLATE=$(curl -s -d "$DATA" -H "$HEADER1" -H "$HEADER2" http://localhost:81/api/v2/job_templates/ | jq -r ".id")
+
+echo $TEMPLATE
+
 export DATA='{"name":"Deployment", "organization":'$ORGANIZATION', "inventory":'$INVENTORY', "project":'$PROJECT', "playbook":"deployment-playbook.yml", "ask_variables_on_launch": true, "verbosity": 3}'
 export TEMPLATE=$(curl -s -d "$DATA" -H "$HEADER1" -H "$HEADER2" http://localhost:81/api/v2/job_templates/ | jq -r ".id")
 
