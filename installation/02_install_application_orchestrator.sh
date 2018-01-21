@@ -95,9 +95,10 @@ EOF
 
   # run docker image
   sudo docker run --detach \
-      --name model model \
+      --name model \
       --add-host=gitlab:$gitlab_ip \
-      --restart unless-stopped
+      --restart unless-stopped \
+      model
 
   # cleanup
   rm Dockerfile
