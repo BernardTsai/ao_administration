@@ -14,18 +14,34 @@
 # ------------------------------------------------------------------------------
 echo Configuring server
 
+# ----- install portainer ------------------------------------------------------
+echo Install Portainer
+
+if [  ! "docker ps -a | grep portainer" ]
+then
+  sudo docker run --detach \
+      --name portainer \
+      --publish 9000:9000 \
+      --restart unless-stopped \
+      --volume /var/run/docker.sock:/var/run/docker.sock \
+      portainer/portainer
+fi
+
 # ----- install GitLab ---------------------------------------------------------
 echo Install GitLab
 
-sudo docker run --detach \
-    --hostname gitlab.example.com \
-    --publish 443:443 --publish 80:80 --publish 22:22 \
-    --name gitlab \
-    --restart always \
-    --volume /srv/gitlab/config:/etc/gitlab \
-    --volume /srv/gitlab/logs:/var/log/gitlab \
-    --volume /srv/gitlab/data:/var/opt/gitlab \
-    gitlab/gitlab-ce:latest
+if [  ! "docker ps -a | grep portainer" ]
+then
+  sudo docker run --detach \
+      --hostname gitlab.example.com \
+      --publish 443:443 --publish 80:80 --publish 22:22 \
+      --name gitlab \
+      --restart always \
+      --volume /srv/gitlab/config:/etc/gitlab \
+      --volume /srv/gitlab/logs:/var/log/gitlab \
+      --volume /srv/gitlab/data:/var/opt/gitlab \
+      gitlab/gitlab-ce:latest
+fi
 
 # determine ip address
 export gitlab_ip=$(docker inspect -f '{{range .NetworkSettings.Networks}}{{.IPAddress}}{{end}}' gitlab)
@@ -33,8 +49,10 @@ export gitlab_ip=$(docker inspect -f '{{range .NetworkSettings.Networks}}{{.IPAd
 # ----- install model ----------------------------------------------------------
 echo Install Model
 
-# build docker image
-cat > Dockerfile <<EOF
+if [  ! "docker ps -a | grep model" ]
+then
+  # build docker image
+  cat > Dockerfile <<EOF
 FROM alpine:latest
 
 MAINTAINER Bernard Tsai <bernad@tsai.eu>
@@ -69,53 +87,47 @@ EXPOSE 22
 CMD ["/usr/sbin/sshd","-D"]
 EOF
 
-# build docker image
-sudo docker build -t model .
+  # build docker image
+  sudo docker build -t model .
 
-# run docker image
-sudo docker run --detach \
-    --name model model \
-    --add-host gitlab:$gitlab_ip \
-    --restart unless-stopped
+  # run docker image
+  sudo docker run --detach \
+      --name model model \
+      --add-host gitlab:$gitlab_ip \
+      --restart unless-stopped
+
+  # cleanup
+  rm Dockerfile
+fi
 
 # determine ip address
 export model_ip=$(docker inspect -f '{{range .NetworkSettings.Networks}}{{.IPAddress}}{{end}}' model)
 
-# cleanup
-rm Dockerfile
-
 # ----- install AWX ------------------------------------------------------------
 echo Install AWX
 
-# clone AWX repository
-git clone https://github.com/ansible/awx.git
+if [  ! "docker ps -a | grep awx_web" ]
+then
+  # clone AWX repository
+  git clone https://github.com/ansible/awx.git
 
-# change port to 81
-cd awx/installer
-sed -i 's/host_port=80/host_port=81/' inventory
+  # change port to 81
+  cd awx/installer
+  sed -i 's/host_port=80/host_port=81/' inventory
 
-# start installer ansible playbook
-sudo ansible-playbook -i inventory install.yml
+  # start installer ansible playbook
+  sudo ansible-playbook -i inventory install.yml
 
-# add hosts
-sudo docker exec -it awx_web  sh -c "echo $gitlab_ip gitlab >> /etc/hosts"
-sudo docker exec -it awx_web  sh -c "echo $model_ip  model  >> /etc/hosts"
-sudo docker exec -it awx_task sh -c "echo $gitlab_ip gitlab >> /etc/hosts"
-sudo docker exec -it awx_task sh -c "echo $model_ip  model  >> /etc/hosts"
+  # add hosts
+  sudo docker exec -it awx_web  sh -c "echo $gitlab_ip gitlab >> /etc/hosts"
+  sudo docker exec -it awx_web  sh -c "echo $model_ip  model  >> /etc/hosts"
+  sudo docker exec -it awx_task sh -c "echo $gitlab_ip gitlab >> /etc/hosts"
+  sudo docker exec -it awx_task sh -c "echo $model_ip  model  >> /etc/hosts"
 
-# cleanup
-cd ../..
-rm -rf awx
-
-# ----- install portainer ------------------------------------------------------
-echo Install Portainer
-
-sudo docker run --detach \
-    --name portainer \
-    --publish 9000:9000 \
-    --restart unless-stopped \
-    --volume /var/run/docker.sock:/var/run/docker.sock \
-    portainer/portainer
+  # cleanup
+  cd ../..
+  rm -rf awx
+fi
 
 # ----- Server configuration completed -----------------------------------------
 echo Finished
