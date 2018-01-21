@@ -14,7 +14,7 @@
 # ------------------------------------------------------------------------------
 echo Configuring server
 
-# install GitLab
+# ----- install GitLab ---------------------------------------------------------
 echo Install GitLab
 
 sudo docker run --detach \
@@ -27,24 +27,10 @@ sudo docker run --detach \
     --volume /srv/gitlab/data:/var/opt/gitlab \
     gitlab/gitlab-ce:latest
 
-# install AWX
-echo Install AWX
+# determine ip address
+export gitlab_ip=$(docker inspect -f '{{range .NetworkSettings.Networks}}{{.IPAddress}}{{end}}' gitlab)
 
-# clone AWX repository
-git clone https://github.com/ansible/awx.git
-
-# change port to 81
-cd awx/installer
-sed -i 's/host_port=80/host_port=81/' inventory
-
-# start installer ansible playbook
-sudo ansible-playbook -i inventory install.yml
-
-# cleanup
-cd ../..
-rm -rf awx
-
-# install model
+# ----- install model ----------------------------------------------------------
 echo Install Model
 
 # build docker image
@@ -87,31 +73,49 @@ EOF
 sudo docker build -t model .
 
 # run docker image
-sudo docker run --detach --name model model
+sudo docker run --detach \
+    --name model model \
+    --add-host gitlab:$gitlab_ip \
+    --restart unless-stopped
+
+# determine ip address
+export model_ip=$(docker inspect -f '{{range .NetworkSettings.Networks}}{{.IPAddress}}{{end}}' model)
 
 # cleanup
 rm Dockerfile
 
-# install portainer
+# ----- install AWX ------------------------------------------------------------
+echo Install AWX
+
+# clone AWX repository
+git clone https://github.com/ansible/awx.git
+
+# change port to 81
+cd awx/installer
+sed -i 's/host_port=80/host_port=81/' inventory
+
+# start installer ansible playbook
+sudo ansible-playbook -i inventory install.yml
+
+# add hosts
+sudo docker exec -it awx_web  sh -c "echo $gitlab_ip gitlab >> /etc/hosts"
+sudo docker exec -it awx_web  sh -c "echo $model_ip  model  >> /etc/hosts"
+sudo docker exec -it awx_task sh -c "echo $gitlab_ip gitlab >> /etc/hosts"
+sudo docker exec -it awx_task sh -c "echo $model_ip  model  >> /etc/hosts"
+
+# cleanup
+cd ../..
+rm -rf awx
+
+# ----- install portainer ------------------------------------------------------
 echo Install Portainer
 
 sudo docker run --detach \
     --name portainer \
     --publish 9000:9000 \
+    --restart unless-stopped \
     --volume /var/run/docker.sock:/var/run/docker.sock \
     portainer/portainer
 
-# add hosts
-echo Add Hosts to /etc/hosts
-
-export gitlab_ip=$(docker inspect -f '{{range .NetworkSettings.Networks}}{{.IPAddress}}{{end}}' gitlab)
-export model_ip=$(docker inspect -f '{{range .NetworkSettings.Networks}}{{.IPAddress}}{{end}}' model)
-
-sudo docker exec -it awx_web  sh -c "echo $gitlab_ip gitlab >> /etc/hosts"
-sudo docker exec -it awx_web  sh -c "echo $model_ip  model  >> /etc/hosts"
-sudo docker exec -it awx_task sh -c "echo $gitlab_ip gitlab >> /etc/hosts"
-sudo docker exec -it awx_task sh -c "echo $model_ip  model  >> /etc/hosts"
-sudo docker exec -it model    sh -c "echo $gitlab_ip gitlab >> /etc/hosts"
-
-# Server configuration completed
+# ----- Server configuration completed -----------------------------------------
 echo Finished
