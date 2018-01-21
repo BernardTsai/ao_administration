@@ -28,5 +28,10 @@ sudo rm -rf /srv/gitlab   2>&1 > /dev/null
 echo Remove images
 sudo docker rmi $(docker images -q) > /dev/null 2>&1
 
+# Remove data
+echo Remove data
+sudo rm -rf /srv/gitlab
+sudo rm -rf /tmp/pgdocker
+
 # Containers, volumes and images have been removed
 echo Finished
