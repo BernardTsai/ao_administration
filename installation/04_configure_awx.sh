@@ -90,7 +90,7 @@ echo Defining job templates
 export HEADER1="Content-Type: application/json"
 export HEADER2="Authorization: Token $TOKEN"
 
-export COUNT=$(curl -s -H "$HEADER1" -H "$HEADER2" http://localhost:81/api/v2/inventories/?search=Onboarding | jq -r ".count")
+export COUNT=$(curl -s -H "$HEADER1" -H "$HEADER2" http://localhost:81/api/v2/job_templates/?search=Onboarding | jq -r ".count")
 
 if [ $COUNT -eq 0 ]
 then
@@ -100,7 +100,7 @@ then
   echo $TEMPLATE
 fi
 
-export COUNT=$(curl -s -H "$HEADER1" -H "$HEADER2" http://localhost:81/api/v2/inventories/?search=Deployment | jq -r ".count")
+export COUNT=$(curl -s -H "$HEADER1" -H "$HEADER2" http://localhost:81/api/v2/job_templates/?search=Deployment | jq -r ".count")
 
 if [ $COUNT -eq 0 ]
 then
@@ -110,7 +110,7 @@ then
   echo $TEMPLATE
 fi
 
-export COUNT=$(curl -s -H "$HEADER1" -H "$HEADER2" http://localhost:81/api/v2/inventories/?search=Inventory | jq -r ".count")
+export COUNT=$(curl -s -H "$HEADER1" -H "$HEADER2" http://localhost:81/api/v2/job_templates/?search=Inventory | jq -r ".count")
 
 if [ $COUNT -eq 0 ]
 then
@@ -120,7 +120,7 @@ then
   echo $TEMPLATE
 fi
 
-export COUNT=$(curl -s -H "$HEADER1" -H "$HEADER2" http://localhost:81/api/v2/inventories/?search=Scale-In | jq -r ".count")
+export COUNT=$(curl -s -H "$HEADER1" -H "$HEADER2" http://localhost:81/api/v2/job_templates/?search=Scale-In | jq -r ".count")
 
 if [ $COUNT -eq 0 ]
 then
@@ -130,7 +130,7 @@ then
   echo $TEMPLATE
 fi
 
-export COUNT=$(curl -s -H "$HEADER1" -H "$HEADER2" http://localhost:81/api/v2/inventories/?search=Scale-Out | jq -r ".count")
+export COUNT=$(curl -s -H "$HEADER1" -H "$HEADER2" http://localhost:81/api/v2/job_templates/?search=Scale-Out | jq -r ".count")
 
 if [ $COUNT -eq 0 ]
 then
@@ -140,7 +140,7 @@ then
   echo $TEMPLATE
 fi
 
-export COUNT=$(curl -s -H "$HEADER1" -H "$HEADER2" http://localhost:81/api/v2/inventories/?search=Cleanup | jq -r ".count")
+export COUNT=$(curl -s -H "$HEADER1" -H "$HEADER2" http://localhost:81/api/v2/job_templates/?search=Cleanup | jq -r ".count")
 
 if [ $COUNT -eq 0 ]
 then
