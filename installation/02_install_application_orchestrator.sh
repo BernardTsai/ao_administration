@@ -17,7 +17,7 @@ echo Configuring server
 # ----- install portainer ------------------------------------------------------
 echo Install Portainer
 
-if [  ! "docker ps -a | grep portainer" ]
+if [  "docker ps -a | grep portainer" ]
 then
   sudo docker run --detach \
       --name portainer \
@@ -30,7 +30,7 @@ fi
 # ----- install GitLab ---------------------------------------------------------
 echo Install GitLab
 
-if [  ! "docker ps -a | grep portainer" ]
+if [  "docker ps -a | grep portainer" ]
 then
   sudo docker run --detach \
       --hostname gitlab.example.com \
@@ -49,7 +49,7 @@ export gitlab_ip=$(docker inspect -f '{{range .NetworkSettings.Networks}}{{.IPAd
 # ----- install model ----------------------------------------------------------
 echo Install Model
 
-if [  ! "docker ps -a | grep model" ]
+if [  "docker ps -a | grep model" ]
 then
   # build docker image
   cat > Dockerfile <<EOF
@@ -106,7 +106,7 @@ export model_ip=$(docker inspect -f '{{range .NetworkSettings.Networks}}{{.IPAdd
 # ----- install AWX ------------------------------------------------------------
 echo Install AWX
 
-if [  ! "docker ps -a | grep awx_web" ]
+if [  "docker ps -a | grep awx_web" ]
 then
   # clone AWX repository
   git clone https://github.com/ansible/awx.git
