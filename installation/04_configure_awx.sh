@@ -79,7 +79,7 @@ fi
 
 export HEADER1="Content-Type: application/json"
 export HEADER2="Authorization: Token $TOKEN"
-export COUNT=$(curl -s -H "$HEADER1" -H "$HEADER2" http://localhost:81/api/v2/inventories/?search=DTAG | jq -r ".results[0].id")
+export INVENTORY=$(curl -s -H "$HEADER1" -H "$HEADER2" http://localhost:81/api/v2/inventories/?search=DTAG | jq -r ".results[0].id")
 
 echo $INVENTORY
 
